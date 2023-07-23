@@ -6,7 +6,9 @@
 #include <readline/readline.h>
 #include <sstream> // for std::istringstream
 #include <string>  // for std::string, std::getline
+#include <sys/stat.h>
 #include <vector>
+// g++ stugrad.cpp -o stugrad -lreadline
 
 class CommandLineInterface {
 public:
@@ -38,6 +40,8 @@ public:
       }
       if (command == "-m" || command == "--multi-grader") {
         run_multi_grader(assignment);
+      } else if (command == "-d" || command == "--directory") {
+        create_directory(assignment);
       } else {
         std::cerr << "myprogram: invalid command\n";
         print_help();
@@ -90,6 +94,12 @@ private:
         if (std::strncmp(text, "--multi-grader", strlen(text)) == 0) {
           matches.push_back("--multi-grader");
         }
+        if (std::strncmp(text, "-d", strlen(text)) == 0) {
+          matches.push_back("-d");
+        }
+        if (std::strncmp(text, "--directory", strlen(text)) == 0) {
+          matches.push_back("--directory");
+        }
       }
     }
 
@@ -108,12 +118,24 @@ private:
     std::cout << "  -m, --multi-grader ASSIGNMENT\n";
     std::cout << "                 Grade the specified assignment using "
                  "multi-grader\n";
+    std::cout << "  -d, --directory ASSIGNMENT\n";
+    std::cout << "                 Create a new assignment directory with "
+                 "the specified name\n";
   }
 
   void run_multi_grader(const std::string &assignment) const {
     std::string command = "./multi-grader.sh ";
     command += assignment;
     system(command.c_str());
+  }
+
+  void create_directory(const std::string &name) const {
+    // Create Assignments directory if it doesn't exist
+    mkdir("Assignments", 0755);
+
+    // Create new assignment directory
+    std::string path = "Assignments/" + name;
+    mkdir(path.c_str(), 0755);
   }
 
   bool parse_command_line(const std::string &line, std::string &command,
@@ -132,6 +154,14 @@ private:
           assignment = arg;
         } else {
           std::cerr << "myprogram: option requires an argument -- 'm'\n";
+          return false;
+        }
+      } else if (arg == "-d" || arg == "--directory") {
+        command = arg;
+        if (iss >> arg) {
+          assignment = arg;
+        } else {
+          std::cerr << "myprogram: option requires an argument -- 'd'\n";
           return false;
         }
       } else {
