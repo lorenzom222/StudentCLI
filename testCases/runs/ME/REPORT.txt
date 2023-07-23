@@ -1,0 +1,8 @@
+
+0 / 5 tests passed in CATEGORY allProfit
+0 / 5 tests passed in CATEGORY massDecline
+0 / 5 tests passed in CATEGORY profitChoices
+0 / 5 tests passed in CATEGORY rangeDecline
+0 / 5 tests passed in CATEGORY tooCheap
+0 / 5 tests passed in CATEGORY writeupExamples
+0 / 60 points.

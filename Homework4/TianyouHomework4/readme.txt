@@ -1,0 +1,1 @@
+My project has a little imperfection. When the user enter the whole input with a quit in the end, he has to press "enter" again to see the total profit. I cannot figure out the reason behind it.
