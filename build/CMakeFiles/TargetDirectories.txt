@@ -1,0 +1,3 @@
+/Users/lorenzomendoza/Documents/Personal_Projects/Shell/StudentCLI/src/build/CMakeFiles/stg.dir
+/Users/lorenzomendoza/Documents/Personal_Projects/Shell/StudentCLI/src/build/CMakeFiles/edit_cache.dir
+/Users/lorenzomendoza/Documents/Personal_Projects/Shell/StudentCLI/src/build/CMakeFiles/rebuild_cache.dir
