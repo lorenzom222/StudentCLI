@@ -27,7 +27,7 @@ make
 ```
 
 
-After these steps, you should have an executable named `stg` in the `build/gradebook` directory (or in the directory specified by the `STG_OUTPUT_DIRECTORY` variable).
+After these steps, you should have an executable named stg in the gradebook directory within the current source directory.
 
 ## Usage
 
