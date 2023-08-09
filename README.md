@@ -45,8 +45,6 @@ cd grader
 Homework4
 Calvin: 48 / 60 points.
 Robert: 60 / 60 points.
-> --grader 
-.  ..
 > --grader Homework4
 Usage: ../scripts/grader.sh ASSIGNMENT [STUDENT]...
 > --grader Homework4 -A
