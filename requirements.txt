@@ -1,3 +1,0 @@
-brew install readline
-g++ stugrad.cpp -o stugrad -lreadline
-

@@ -12,7 +12,7 @@ add_executable(stg src/main.cpp src/commands.cpp src/cli.cpp)
 
 # Set the output directory for the executable
 set_target_properties(stg PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/gradebook"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/grader_dir"
 )
 
 # Link with the Readline library

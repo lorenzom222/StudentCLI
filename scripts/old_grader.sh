@@ -2,26 +2,22 @@
 
 # Helper function to print a student's grade to the grades.csv file
 print_grade() {
-    GRADEBOOK_DIR="../../gradebook"
-    mkdir -p "${GRADEBOOK_DIR}"
-
     # Check if the grades.csv file exists
-    if [ ! -f "${GRADEBOOK_DIR}/grades.csv" ]; then
+    if [ ! -f grades.csv ]; then
         # Create the grades.csv file with a header row
-        echo "Student Name,${ASSIGNMENT}" > "${GRADEBOOK_DIR}/grades.csv"
+        echo "Student Name,${ASSIGNMENT}" > grades.csv
     fi
 
     # Check if the student already has a row in the grades.csv file
-    if grep -q "^${STUDENT_NAME}," "${GRADEBOOK_DIR}/grades.csv"; then
+    if grep -q "^${STUDENT_NAME}," grades.csv; then
         # Update the student's grade for this assignment
-        sed -i '' "s|^${STUDENT_NAME},.*|${STUDENT_NAME},${GRADE}|" "${GRADEBOOK_DIR}/grades.csv"
+        sed -i '' "s|^${STUDENT_NAME},.*|${STUDENT_NAME},${GRADE}|" grades.csv
         echo "Updated ${STUDENT_NAME}'s grade for ${ASSIGNMENT} to ${GRADE}"
     else
         # Append the student's grade to the grades.csv file
-        echo "${STUDENT_NAME},${GRADE}" >> "${GRADEBOOK_DIR}/grades.csv"
+        echo "${STUDENT_NAME},${GRADE}" >> grades.csv
         echo "Appended ${STUDENT_NAME}'s grade for ${ASSIGNMENT} as ${GRADE}"
     fi
-
 }
 
 
@@ -30,7 +26,7 @@ print_grade() {
 copy_output_files() {
     # Copy all output files to the student's folder.
     mkdir -p "${RUNS}/${STUDENT_NAME}"
-    cp -r "$PROCESS" "$REPORT" "${RUNS}/${STUDENT_NAME}"
+    cp "$LOG" "$REPORT" "${RUNS}/${STUDENT_NAME}"
 }
 
 # Helper function to delete temporary files
@@ -49,20 +45,20 @@ log() {
 grade() {
     STUDENT_NAME="$1"
 
-    log "Grading student $STUDENT_NAME for assignment $STUDENT"
+    log "Grading student $STUDENT_NAME for assignment $ASSIGNMENT"
 
-    ZIPFILE="${STUDENT}/${STUDENT_NAME}-${ASSIGNMENT}.zip"
+    ZIPFILE="${ASSIGNMENT}/${STUDENT_NAME}-${ASSIGNMENT}.zip"
 
     # Unzip the student's files into their assignment folder
-    unzip -o $ZIPFILE -d ${STUDENT}/${STUDENT_NAME}${ASSIGNMENT}
+    unzip -o $ZIPFILE -d ${ASSIGNMENT}/${STUDENT_NAME}${ASSIGNMENT}
 
     # Copy student's files from their assignment folder to the root directory
-    cp ${STUDENT}/${STUDENT_NAME}${ASSIGNMENT}/* .
+    cp ${ASSIGNMENT}/${STUDENT_NAME}${ASSIGNMENT}/* .
 
     # Get the name of the Java file from the copied files
     STUCLASS=$(basename $(ls *.java) .java)
 
-    mkdir -p $PROCESS
+    mkdir -p $STUDENT
 
     LOG="LOG.txt"
     REPORT="REPORT.txt"
@@ -89,13 +85,12 @@ grade() {
         CATEGORY=$(basename $CPATH)
         #CAUTION -- change these variables at your peril!
         # The next two lines ensure the student directory exists and is empty.
-        rm -rf $PROCESS/$CATEGORY
-        mkdir -p $PROCESS/$CATEGORY
-        echo $PROCESS/$CATEGORY
+        rm -rf $STUDENT/$CATEGORY
+        mkdir -p $STUDENT/$CATEGORY
 
         for TEST in $CPATH/*; do
             NAME=$(basename $TEST .txt)
-            cat $TEST | timeout 10s java $STUCLASS > ${PROCESS}/$CATEGORY/${NAME}_out.txt
+            cat $TEST | timeout 10s java $STUCLASS > ${STUDENT}/$CATEGORY/${NAME}_out.txt
             if [ $? -ne 0 ]; then # if timeout then fail and exit script
                 log "Test $NAME timed out for student $STUDENT_NAME in category $CATEGORY"
                 echo "$CATEGORY test $NAME timeout.";
@@ -116,7 +111,7 @@ grade() {
             else # else do the comparision
                 # Compare only unique numeric values in the two files within a certain range of the target number and format the numbers to have two decimal places
                 # Eliminates: Irrelevant Strings, Rounding mismatch, and Trailing 0s
-                diff <(awk '$1 >= 5 &&$1 <= 15 {printf "%.2f\n", $1}' <(grep -oE '[0-9]+(\.[0-9]+)?' $TARGETS/$CATEGORY/${NAME}_out.txt | sort -n | uniq)) <(awk '$1 >= 5 &&$1 <= 15 {printf "%.2f\n", $1}' <(grep -oE '[0-9]+(\.[0-9]+)?' ${PROCESS}/$CATEGORY/${NAME}_out.txt | sort -n | uniq)) 2>>$LOG
+                diff <(awk '$1 >= 5 &&$1 <= 15 {printf "%.2f\n", $1}' <(grep -oE '[0-9]+(\.[0-9]+)?' $TARGETS/$CATEGORY/${NAME}_out.txt | sort -n | uniq)) <(awk '$1 >= 5 &&$1 <= 15 {printf "%.2f\n", $1}' <(grep -oE '[0-9]+(\.[0-9]+)?' ${STUDENT}/$CATEGORY/${NAME}_out.txt | sort -n | uniq)) 2>>$LOG
                 if [ $? -eq 0 ]; then
                     PASSES=$((PASSES + 1))
                     MSG="$CATEGORY test $NAME passed."
@@ -151,44 +146,30 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-echo "$1"
-echo "$2"
-
-
 # Set the variables from the arguments
-ASSIGNMENT=$1
+ASSIGNMENT=$(pwd)
 shift
 
-
+# Check if the -a flag is present
 ALL_STUDENTS=false
 if [ "$1" == "-a" ]; then
     ALL_STUDENTS=true
     shift
 fi
 
-cd ".."
- 
-ROOT=assignments/${ASSIGNMENT}
-echo "${ROOT}"
-
-cd "${ROOT}"
-ls
-TEST=testCases;
-INPUTS=${TEST}/inputs 
-TARGETS=${TEST}/targets
-STUDENT=students # Where each assignment per student is located
-PROCESS=${TEST}/process # log folder for processing the assignment
-RUNS=${TEST}/runs # outputs of students code
-
-
+ROOT="testCases";
+INPUTS=${ROOT}/inputs
+TARGETS=${ROOT}/targets
+STUDENT=${ROOT}/students
+RUNS=${ROOT}/runs
 
 if [ "$ALL_STUDENTS" == "true" ]; then
     # Print the list of student zip files in alphabetical order
     echo "List of students to be graded in alphabetical order:"
-    ls ${STUDENT}/*.zip | sort | xargs -n 1 basename | cut -d '-' -f 1
+    ls ${ASSIGNMENT}/*.zip | sort | xargs -n 1 basename | cut -d '-' -f 1
 
     # Process all student zip files in the assignment directory in alphabetical order
-    for ZIPFILE in $(ls ${STUDENT}/*.zip | sort); do
+    for ZIPFILE in $(ls ${ASSIGNMENT}/*.zip | sort); do
         # Get the student name from the zip file name
         STUDENT_NAME=$(basename ${ZIPFILE%.zip} | cut -d '-' -f 1)
 

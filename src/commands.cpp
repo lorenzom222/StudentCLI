@@ -2,12 +2,26 @@
 #include "commands.h"
 
 void MultiGraderCommand::execute(const std::vector<std::string> &args) const {
-  if (args.size() != 1) {
-    std::cerr << "myprogram: option requires an argument -- 'm'\n";
+  if (args.size() < 1) {
+    std::cerr << "myprogram: option requires at least one argument -- 'g'\n";
     return;
   }
-  std::string command = "./multi-grader.sh ";
-  command += args[0];
+  std::string command = "../scripts/grader.sh ";
+  for (const auto &arg : args) {
+    command += arg + " ";
+  }
+  system(command.c_str());
+}
+
+void ViewGradesCommand::execute(const std::vector<std::string> &args) const {
+  if (args.empty()) {
+    std::cerr << "myprogram: option requires at least one argument -- 'v'\n";
+    return;
+  }
+  std::string command = "../scripts/view_grades.sh ";
+  for (const auto &arg : args) {
+    command += arg + " ";
+  }
   system(command.c_str());
 }
 

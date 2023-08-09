@@ -18,7 +18,10 @@ class MultiGraderCommand : public Command {
 public:
   void execute(const std::vector<std::string> &args) const override;
 };
-
+class ViewGradesCommand : public Command {
+public:
+  void execute(const std::vector<std::string> &args) const override;
+};
 class DirectoryCommand : public Command {
 public:
   void execute(const std::vector<std::string> &args) const override;

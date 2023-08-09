@@ -6,8 +6,10 @@ CommandLineInterface::CommandLineInterface() {
   rl_attempted_completion_function = completion;
 
   // Initialize commands
-  commands["-m"] = std::make_unique<MultiGraderCommand>();
-  commands["--multi-grader"] = std::make_unique<MultiGraderCommand>();
+  commands["-g"] = std::make_unique<MultiGraderCommand>();
+  commands["--grader"] = std::make_unique<MultiGraderCommand>();
+  commands["-v"] = std::make_unique<ViewGradesCommand>();
+  commands["--view-grades"] = std::make_unique<ViewGradesCommand>();
   commands["-d"] = std::make_unique<DirectoryCommand>();
   commands["--directory"] = std::make_unique<DirectoryCommand>();
 }
@@ -86,11 +88,17 @@ char *CommandLineInterface::generator(const char *text, int state) {
       }
     } else {
       // Generate a list of possible command completion matches
-      if (std::strncmp(text, "-m", strlen(text)) == 0) {
-        matches.push_back("-m");
+      if (std::strncmp(text, "-g", strlen(text)) == 0) {
+        matches.push_back("-g");
       }
-      if (std::strncmp(text, "--multi-grader", strlen(text)) == 0) {
-        matches.push_back("--multi-grader");
+      if (std::strncmp(text, "--grader", strlen(text)) == 0) {
+        matches.push_back("--grader");
+      }
+      if (std::strncmp(text, "-v", strlen(text)) == 0) {
+        matches.push_back("-v");
+      }
+      if (std::strncmp(text, "--view-grades", strlen(text)) == 0) {
+        matches.push_back("--view-grades");
       }
       if (std::strncmp(text, "-d", strlen(text)) == 0) {
         matches.push_back("-d");
