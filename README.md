@@ -29,22 +29,42 @@ make
 
 After these steps, you should have an executable named stg in the gradebook directory within the current source directory.
 
-## Usage
+## Interface
 
-To use StudentCLI, run the `stg` executable from the command line. You can use the `-m` or `--multi-grader` option to grade an assignment using the multi-grader script, or the `-d` or `--directory` option to create a new assignment directory.
-
-For example, to grade an assignment named `assignment1`, you can run the following command:
-
+- Navigate the *grader* directory and run *stg*
 ```
-./stg -m assignment1
-
+cd grader
+./stg
 ```
 
-To create a new assignment directory named `assignment2`, you can run the following command:
+- This will activate the grading inferace where you can prompt the built in commands for grading:
 
 ```
-./stg -d assignment2
+(base) lorenzomendoza@Lorenzos-Air grader_dir % ./stg
+> --view-grades -t -a Homework4 
+Homework4
+Calvin: 48 / 60 points.
+Robert: 60 / 60 points.
+> --grader 
+.  ..
+> --grader Homework4
+Usage: ../scripts/grader.sh ASSIGNMENT [STUDENT]...
+> --grader Homework4 -A
+Grading Calvin's Homework4...
+allProfit test 1 passed.
+allProfit test 2 passed.
+allProfit test 3 passed.
+allProfit test 4 passed.
+allProfit test 5 passed.
+massDecline test 1 passed.
+massDecline test 2 passed.
+massDecline test 3 passed.
+...
 ```
 
+## Command
 
-For more information, run `stg` with the `-h` or `--help` option to display a help message.
+- --grader or -g
+- -- view_grades or -d
+
+  

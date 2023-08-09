@@ -21,6 +21,7 @@ while getopts "a:t" opt; do
     esac
 done
 
+
 # Shift the positional parameters to remove the parsed options
 shift $((OPTIND-1))
 
@@ -30,7 +31,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-echo ${STUDENT_NAMES}
+echo ${ASSIGNMENT}
 
 # Set the path of the grades.csv file
 GRADES_FILE="../gradebook/grades.csv"
@@ -58,7 +59,7 @@ else
     declare -A GRADES
     while IFS=, read -r STUDENT_NAME GRADE; do
         GRADES[$STUDENT_NAME]=$GRADE
-    done < <(tail -n +2 "$GRADES_FILE" | awk -F, -v assignment="$ASSIGNMENT" '{print $1 "," $assignment}')
+    done < <(tail -n +2 "$GRADES_FILE" | awk -F, -v assignment="$ASSIGNMENT" '{print $1 "," $2}')
 
     if [ ${#STUDENT_NAMES[@]} -eq 0 ]; then
         # Print all student grades in alphabetical order for a specific assignment if no student names were provided.
